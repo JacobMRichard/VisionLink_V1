@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebSearch",
-      "Bash(conda run:*)",
-      "Bash(del \"c:\\\\Users\\\\jaker\\\\Claude\\\\VisionLinkV1\\\\laptop-server\\\\check_imports.py\")"
-    ]
-  }
-}

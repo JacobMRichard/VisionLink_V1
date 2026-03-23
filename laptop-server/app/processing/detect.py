@@ -1,4 +1,5 @@
 import logging
+import threading
 from typing import List
 
 import numpy as np
@@ -9,6 +10,9 @@ from app.processing.tracked_object import RawDetection
 log = logging.getLogger(__name__)
 
 _model = None
+# Serialise YOLO calls across threads (live pipeline + snapshot pipeline share one model).
+# ultralytics/PyTorch inference is not thread-safe on a single model instance.
+_model_lock = threading.Lock()
 
 
 def load_model():
@@ -34,7 +38,8 @@ def detect_yolo(frame: np.ndarray) -> List[RawDetection]:
         return []
 
     frame_h, frame_w = frame.shape[:2]
-    results = _model(frame, conf=config.CONFIDENCE_THRESHOLD, verbose=False)
+    with _model_lock:
+        results = _model(frame, conf=config.CONFIDENCE_THRESHOLD, verbose=False)
 
     detections: List[RawDetection] = []
     for result in results:
