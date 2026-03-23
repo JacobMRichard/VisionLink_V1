@@ -7,8 +7,9 @@ object Constants {
     const val FRAME_PORT = 8080
     const val METADATA_WS_PORT = 8081
 
-    val FRAME_POST_URL get() = "http://$LAPTOP_IP:$FRAME_PORT/frame"
-    val METADATA_WS_URL get() = "ws://$LAPTOP_IP:$METADATA_WS_PORT/metadata"
+    val FRAME_POST_URL    get() = "http://$LAPTOP_IP:$FRAME_PORT/frame"
+    val SNAPSHOT_POST_URL get() = "http://$LAPTOP_IP:$FRAME_PORT/snapshot"
+    val METADATA_WS_URL   get() = "ws://$LAPTOP_IP:$METADATA_WS_PORT/metadata"
 
     // ── Camera ─────────────────────────────────────────────────────────────────
     const val FRAME_WIDTH = 1280

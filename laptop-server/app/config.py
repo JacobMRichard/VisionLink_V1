@@ -54,3 +54,36 @@ MAX_CENTROID_DISTANCE = 300.0
 # Weight of floor_score in the priority calculation (0.0 = disabled).
 # floor_score = centroid_y / frame_height, so objects lower in frame are preferred.
 FLOOR_WEIGHT = 0.2
+
+# ── V2 Memory system ───────────────────────────────────────────────────────
+MEMORY_DATA_DIR = "memory_data"
+
+# Crop extraction
+CROP_MARGIN_PX    = 10     # pixels of padding added around each detected bbox
+EDGE_CLIP_MARGIN  = 5      # pixels from edge that counts as "clipped"
+
+# Crop quality gating
+CROP_MIN_SIDE_PX      = 40      # reject crop if min(w,h) < this
+CROP_MIN_CONFIDENCE   = 0.35    # reject crop if detector confidence < this
+CROP_MAX_ASPECT       = 8.0     # reject crop if max/min side ratio > this
+BLUR_SHARP_THRESHOLD  = 200.0   # Laplacian variance considered "sharp" (calibrate on your camera)
+BLUR_MIN_SCORE        = 0.15    # normalised blur score below this → rejected as blurry
+
+# Embedding / descriptor
+EMBEDDING_DIM = 2048    # ResNet-50 output dimension
+
+# Embedding retrieval
+TOP_K_CANDIDATES = 5    # max candidates to retrieve from FAISS per crop
+
+# Identity matching thresholds
+MATCH_KNOWN_THRESHOLD     = 0.75   # composite score >= this → known_match
+MATCH_AMBIGUOUS_THRESHOLD = 0.50   # composite score >= this → ambiguous_candidate
+
+# Match cue weights (must not necessarily sum to 1.0; composite is a weighted sum)
+EMBEDDING_WEIGHT = 0.65
+COLOR_WEIGHT     = 0.25
+LABEL_WEIGHT     = 0.10
+
+# Memory management
+MAX_EXEMPLARS         = 10   # max crop images kept per object
+STABLE_SEEN_THRESHOLD = 3    # times_seen before provisional → stable

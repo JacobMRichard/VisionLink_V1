@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.jake.visionphone.camera.CameraController
+import com.jake.visionphone.camera.CameraFrame
 import com.jake.visionphone.camera.FrameSendStats
 import com.jake.visionphone.databinding.ActivityMainBinding
 import com.jake.visionphone.network.ConnectionState
@@ -20,11 +22,18 @@ import com.jake.visionphone.network.VideoStreamClient
 import com.jake.visionphone.overlay.OverlaySettings
 import com.jake.visionphone.ui.DebugPanel
 import com.jake.visionphone.ui.HealthState
+import com.jake.visionphone.util.Constants
 import com.jake.visionphone.util.EventLog
 import com.jake.visionphone.util.ExportManager
 import com.jake.visionphone.util.RecentStore
 import com.jake.visionphone.util.SessionManager
 import com.jake.visionphone.util.SnapshotManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.File
 
@@ -37,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraController: CameraController
     private lateinit var sendStatsStore: RecentStore
     private lateinit var metadataStatsStore: RecentStore
+
+    // Last captured frame — saved for snapshot POSTs to laptop
+    @Volatile private var lastFrame: CameraFrame? = null
 
     // Latest stats — written from background threads, read on UI thread
     @Volatile private var lastFps: Float = 0f
@@ -107,14 +119,18 @@ class MainActivity : AppCompatActivity() {
         staleHandler.post(staleRunnable)
 
         binding.btnSnapshot.setOnClickListener {
+            // Local diagnostics snapshot (unchanged from V1)
             val stateJson = buildAppStateJson()
             val snapDir = SnapshotManager.capture(
-                appStateJson  = stateJson,
-                metadataStore = if (::metadataStatsStore.isInitialized) metadataStatsStore else null,
+                appStateJson   = stateJson,
+                metadataStore  = if (::metadataStatsStore.isInitialized) metadataStatsStore else null,
                 sendStatsStore = if (::sendStatsStore.isInitialized) sendStatsStore else null,
-                reason        = "manual_button",
+                reason         = "manual_button",
             )
             Toast.makeText(this, "Snapshot saved: ${snapDir.name}", Toast.LENGTH_SHORT).show()
+
+            // V2: send full frame to laptop memory pipeline
+            lastFrame?.let { frame -> sendSnapshotToLaptop(frame) }
         }
 
         binding.btnDebugToggle.setOnClickListener {
@@ -192,7 +208,10 @@ class MainActivity : AppCompatActivity() {
             context        = this,
             lifecycleOwner = this,
             previewView    = binding.previewView,
-            onFrame        = { frame -> videoClient.sendFrame(frame) }
+            onFrame        = { frame ->
+                lastFrame = frame
+                videoClient.sendFrame(frame)
+            }
         )
         cameraController.start()
     }
@@ -264,6 +283,32 @@ class MainActivity : AppCompatActivity() {
                 showCentroid = binding.cbCentroid.isChecked,
             )
         )
+    }
+
+    // ── V2 snapshot ───────────────────────────────────────────────────────────
+    private fun sendSnapshotToLaptop(frame: CameraFrame) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val body = frame.jpegBytes.toRequestBody("image/jpeg".toMediaType())
+                val request = Request.Builder()
+                    .url(Constants.SNAPSHOT_POST_URL)
+                    .post(body)
+                    .addHeader("X-Frame-Id",        frame.frameId.toString())
+                    .addHeader("X-Timestamp-Ms",    frame.timestampMs.toString())
+                    .addHeader("X-Width",           frame.width.toString())
+                    .addHeader("X-Height",          frame.height.toString())
+                    .addHeader("X-Rotation-Degrees", frame.rotationDegrees.toString())
+                    .addHeader("X-Session-Id",       SessionManager.sessionId)
+                    .build()
+                val response = OkHttpClient().newCall(request).execute()
+                val snapId   = response.body?.string() ?: "?"
+                response.close()
+                Log.i(TAG, "snapshot sent to laptop  snap_id=$snapId")
+                EventLog.log("main", "INFO", "snapshot_sent_to_laptop", "snap_id" to snapId)
+            } catch (e: Exception) {
+                Log.w(TAG, "snapshot POST failed: ${e.message}")
+            }
+        }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

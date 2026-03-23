@@ -1,5 +1,5 @@
 """
-VisionLink V1 — Laptop Server
+VisionLink V2 — Laptop Server
 Start with:  python -m app.main
 """
 import os
@@ -15,8 +15,9 @@ from aiohttp import web
 import app.config as config
 from app.diagnostics import make_diagnostics
 from app.networking.frame_buffer import LatestFrameBuffer
-from app.networking.video_server import VideoServer
 from app.networking.metadata_server import MetadataServer
+from app.networking.snapshot_server import SnapshotServer
+from app.networking.video_server import VideoServer
 from app.processing.frame_pipeline import FramePipeline
 from app.util.logging_utils import setup_logging
 
@@ -74,13 +75,15 @@ async def main() -> None:
         from app.visualization.debug_window import DebugWindow
         debug_window = DebugWindow()
 
-    buffer = LatestFrameBuffer(diag=diag)
-    pipeline = FramePipeline(debug_window=debug_window, diag=diag)
+    buffer          = LatestFrameBuffer(diag=diag)
+    pipeline        = FramePipeline(debug_window=debug_window, diag=diag)
     metadata_server = MetadataServer(diag=diag)
-    video_server = VideoServer(buffer, diag=diag)
+    video_server    = VideoServer(buffer, diag=diag)
+    snapshot_server = SnapshotServer(diag=diag)
 
     frame_app = web.Application()
-    frame_app.router.add_post("/frame", video_server.handle_frame)
+    frame_app.router.add_post("/frame",    video_server.handle_frame)
+    frame_app.router.add_post("/snapshot", snapshot_server.handle_snapshot)
 
     meta_app = web.Application()
     meta_app.router.add_get("/metadata", metadata_server.handle_ws)
@@ -96,16 +99,18 @@ async def main() -> None:
     await site2.start()
 
     log.info("=" * 60)
-    log.info("VisionLink V1 — Laptop Server started")
+    log.info("VisionLink V2 — Laptop Server started")
     log.info("  Session         →  %s", diag.session.session_id)
     log.info("  Session folder  →  %s", diag.session.folder)
-    log.info("  Frame receiver  →  http://%s:%d/frame",  config.HOST, config.FRAME_PORT)
-    log.info("  Metadata WS     →  ws://%s:%d/metadata", config.HOST, config.METADATA_PORT)
+    log.info("  Frame receiver  →  http://%s:%d/frame",    config.HOST, config.FRAME_PORT)
+    log.info("  Snapshot        →  http://%s:%d/snapshot", config.HOST, config.FRAME_PORT)
+    log.info("  Metadata WS     →  ws://%s:%d/metadata",   config.HOST, config.METADATA_PORT)
     log.info("  Target FPS      →  %d",    config.TARGET_FPS)
     log.info("  Resolution      →  %dx%d", config.FRAME_WIDTH, config.FRAME_HEIGHT)
     log.info("  JPEG quality    →  %d",    config.JPEG_QUALITY)
     log.info("  Debug window    →  %s",    config.DEBUG_WINDOW)
     log.info("  Detection mode  →  %s",    "FAKE" if config.FAKE_DETECTION_MODE else "REAL")
+    log.info("  Memory dir      →  %s",    config.MEMORY_DATA_DIR)
     log.info("  Log file        →  logs/visionlink.log")
     log.info("=" * 60)
     log.info("Press Ctrl+C to stop.")

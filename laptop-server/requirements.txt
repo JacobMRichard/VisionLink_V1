@@ -2,3 +2,6 @@ aiohttp>=3.9.0
 opencv-python>=4.9.0
 numpy>=1.26.0
 ultralytics>=8.0.0
+torchvision>=0.17.0
+faiss-cpu>=1.7.4
+Pillow>=10.0.0

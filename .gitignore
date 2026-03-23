@@ -10,6 +10,7 @@ venv/
 # ── VisionLink runtime data ───────────────────────────────────────────────────
 laptop-server/sessions/
 laptop-server/logs/
+laptop-server/memory_data/
 
 # ── YOLO model weights (large binary, auto-downloaded on first run) ───────────
 *.pt
