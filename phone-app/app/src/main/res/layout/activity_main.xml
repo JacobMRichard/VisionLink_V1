@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Camera preview fills the screen -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/previewView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Transparent overlay drawn on top of the preview -->
+    <com.jake.visionphone.overlay.OverlayView
+        android:id="@+id/overlayView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent" />
+
+    <!-- Top-left: DBG + settings button column, settings panel below -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:layout_margin="8dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnDebugToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DBG"
+                android:textSize="10sp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:backgroundTint="#AA333333"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&#9881;"
+                android:textSize="14sp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:backgroundTint="#AA333333"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <!-- Settings panel — hidden until ⚙ is tapped -->
+        <LinearLayout
+            android:id="@+id/settingsPanel"
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:layout_marginTop="4dp"
+            android:background="#CC000000"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OVERLAY"
+                android:textColor="#AAFFFFFF"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:layout_marginBottom="8dp" />
+
+            <CheckBox
+                android:id="@+id/cbPolygon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Polygon outline"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:checked="false" />
+
+            <CheckBox
+                android:id="@+id/cbLabels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Labels"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:checked="true" />
+
+            <CheckBox
+                android:id="@+id/cbCentroid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Centroid dot"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:checked="true" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Snapshot button — top-right, always visible -->
+    <Button
+        android:id="@+id/btnSnapshot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:text="SNAP"
+        android:textSize="11sp"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:backgroundTint="#AA0055FF"
+        android:textColor="@android:color/white"
+        android:alpha="0.85" />
+
+    <!-- Debug panel — hidden by default, toggled with DBG button -->
+    <LinearLayout
+        android:id="@+id/debugPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#AA000000"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvMode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mode: --  |  IP: --"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+
+        <TextView
+            android:id="@+id/tvFps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="FPS: --"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+
+        <TextView
+            android:id="@+id/tvLatency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="pipeline: -- ms"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+
+        <TextView
+            android:id="@+id/tvFrameIds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sent: #--  |  meta: #--  |  age: -- ms"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disconnected"
+            android:textColor="#FFFF4444"
+            android:textSize="13sp"
+            android:fontFamily="monospace" />
+
+    </LinearLayout>
+
+</FrameLayout>

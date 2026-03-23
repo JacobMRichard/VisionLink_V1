@@ -1,0 +1,30 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.env
+.venv
+venv/
+
+# ── VisionLink runtime data ───────────────────────────────────────────────────
+laptop-server/sessions/
+laptop-server/logs/
+
+# ── YOLO model weights (large binary, auto-downloaded on first run) ───────────
+*.pt
+*.onnx
+
+# ── Android ───────────────────────────────────────────────────────────────────
+phone-app/local.properties
+phone-app/.gradle/
+phone-app/app/build/
+phone-app/build/
+*.iml
+.idea/
+*.apk
+*.aab
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
