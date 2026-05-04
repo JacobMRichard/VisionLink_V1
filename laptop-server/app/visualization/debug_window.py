@@ -31,4 +31,7 @@ class DebugWindow:
         cv2.waitKey(1)
 
     def close(self) -> None:
-        cv2.destroyWindow(self.name)
+        try:
+            cv2.destroyWindow(self.name)
+        except cv2.error:
+            pass

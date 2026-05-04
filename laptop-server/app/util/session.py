@@ -17,6 +17,12 @@ class Session:
         self.folder = Path("sessions") / self.session_id
         self.folder.mkdir(parents=True, exist_ok=True)
         self._save_config_snapshot()
+        self._write_current_pointer()
+
+    def _write_current_pointer(self) -> None:
+        """Write sessions/current.json so external tools (MCP server) can find the active session."""
+        pointer = {"session_id": self.session_id, "folder": str(self.folder)}
+        (self.folder.parent / "current.json").write_text(json.dumps(pointer, indent=2))
 
     def _save_config_snapshot(self) -> None:
         snapshot = {

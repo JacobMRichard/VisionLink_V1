@@ -29,8 +29,8 @@ class LatestFrameBuffer:
     async def put(self, jpeg: bytes, meta: FrameMetadata) -> None:
         if self._event.is_set():
             self._drop_count += 1
-            log.debug(
-                "frame=%d overwritten (processor lagging)  total_drops=%d",
+            log.info(
+                "drop  frame=%d overwritten (YOLO busy)  total_drops=%d",
                 meta.frame_id, self._drop_count,
             )
             if self._diag:

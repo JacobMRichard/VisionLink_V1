@@ -15,6 +15,12 @@ class DiagnosticsBundle:
     exceptions: ExceptionsLog
     exporter: Exporter
 
+    def close(self) -> None:
+        """Flush all async writers. Call once during shutdown before process exit."""
+        self.timings.flush_now()
+        self.metadata.flush_now()
+        self.events.close()
+
 
 def make_diagnostics() -> DiagnosticsBundle:
     session = Session()

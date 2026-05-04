@@ -149,7 +149,7 @@ class FramePipeline:
             "total_ms":   round((t_track - t0) * 1000, 1),
             "objects":    len(wire_objects),
         }
-        log.debug(
+        log.info(
             "pipeline  frame=%d  fps=%.1f  latency=%.0f ms  "
             "decode=%.1f ms  detect=%.1f ms  track=%.1f ms  total=%.1f ms  objects=%d",
             meta.frame_id, fps, latency_ms,
@@ -158,11 +158,6 @@ class FramePipeline:
         )
         if self._diag:
             self._diag.timings.push(timing)
-            self._diag.events.log(
-                "frame_pipeline", "DEBUG", "frame_processed",
-                frame_id=meta.frame_id, fps=fps, latency_ms=latency_ms,
-                total_ms=timing["total_ms"], objects=len(wire_objects),
-            )
 
         return MetadataResponse(
             frame_id=meta.frame_id,

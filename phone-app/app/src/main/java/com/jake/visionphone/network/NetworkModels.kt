@@ -4,14 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class BBox(
-    val x: Int,
-    val y: Int,
-    val w: Int,
-    val h: Int
-)
-
-@Serializable
 data class DetectedObject(
     val id: Int,
     val label: String,

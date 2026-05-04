@@ -4,6 +4,7 @@ from typing import List, Set, Tuple
 
 import app.config as config
 from app.processing.tracked_object import RawDetection, TrackedObject, TrackState
+from app.runtime_config import RuntimeConfig
 
 log = logging.getLogger(__name__)
 
@@ -200,4 +201,4 @@ class CentroidIoUTracker:
 
         active = [t for t in self._tracks if t.state != TrackState.LOST]
         lost   = [t for t in self._tracks if t.state == TrackState.LOST]
-        return sorted(active, key=priority, reverse=True)[:config.MAX_TRACKED_OBJECTS] + lost
+        return sorted(active, key=priority, reverse=True)[:RuntimeConfig.get_max_objects()] + lost

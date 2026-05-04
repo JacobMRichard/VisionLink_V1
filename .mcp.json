@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "visionlink-debug": {
+      "command": "python",
+      "args": ["-m", "app.mcp_server"],
+      "cwd": "c:\\Users\\jaker\\Claude\\VisionLinkV1\\laptop-server"
+    }
+  }
+}

@@ -74,7 +74,7 @@ class MetadataServer:
                 dead.add(ws)
         self._clients -= dead
 
-        log.debug(
+        log.info(
             "tx  frame=%d  payload=%d B  clients=%d",
             data.get("frame_id", 0), payload_bytes, len(self._clients),
         )

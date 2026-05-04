@@ -1,6 +1,34 @@
+# ── Discord notifications ───────────────────────────────────────────────────
+# Paste your Discord webhook URL here. Leave empty to disable notifications.
+DISCORD_WEBHOOK_URL = ""  # Paste your webhook URL here — never commit it
+
+# Minimum seconds between notifications for the same object class.
+NOTIFICATION_COOLDOWN_S = 30.0
+
+# ── Class groups (for MCP filter commands) ──────────────────────────────────
+# Used by the MCP server so you can say "track people" or "track animals".
+# Each key maps to a list of YOLO COCO class names.
+CLASS_GROUPS: dict = {
+    "people":      ["person"],
+    "animals":     ["bird", "cat", "dog", "horse", "sheep", "cow",
+                    "elephant", "bear", "zebra", "giraffe"],
+    "pets":        ["cat", "dog"],
+    "vehicles":    ["bicycle", "car", "motorcycle", "airplane",
+                    "bus", "train", "truck", "boat"],
+    "electronics": ["tv", "laptop", "mouse", "remote", "keyboard", "cell phone"],
+    "furniture":   ["chair", "couch", "bed", "dining table", "toilet"],
+    "food":        ["banana", "apple", "sandwich", "orange", "broccoli",
+                    "carrot", "hot dog", "pizza", "donut", "cake"],
+    "sports":      ["frisbee", "skis", "snowboard", "sports ball", "kite",
+                    "baseball bat", "baseball glove", "skateboard",
+                    "surfboard", "tennis racket"],
+    "kitchen":     ["bottle", "wine glass", "cup", "fork", "knife",
+                    "spoon", "bowl"],
+}
+
 HOST = "0.0.0.0"
-FRAME_PORT = 8080       # HTTP POST endpoint: phone → laptop
-METADATA_PORT = 8081    # WebSocket endpoint:  laptop → phone
+FRAME_PORT = 8090       # HTTP POST endpoint: phone → laptop
+METADATA_PORT = 8091    # WebSocket endpoint:  laptop → phone
 
 TARGET_FPS = 30
 FRAME_WIDTH = 1280

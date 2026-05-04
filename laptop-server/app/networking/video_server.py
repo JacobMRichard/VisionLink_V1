@@ -43,7 +43,7 @@ class VideoServer:
             return web.Response(status=400, text="Empty body")
 
         arrival_latency_ms = max(0.0, time.time() * 1000 - timestamp_ms)
-        log.debug(
+        log.info(
             "rx  frame=%d  size=%d B  arrival_latency=%.0f ms  %dx%d  rot=%d",
             frame_id, len(jpeg_bytes), arrival_latency_ms, width, height, rotation_degrees,
         )
